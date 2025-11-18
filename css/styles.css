@@ -1,0 +1,126 @@
+:root{
+  --bg:#0f0f14; --card:#181823; --muted:#aa9bd8; --ac:#6d5bd0; --ac-2:#8b7cf1; --txt:#e9e8ff; --ok:#2ecc71; --warn:#f1c40f; --bad:#e74c3c;
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(120deg,#0e0e13,#12121a 60%,#0f0f14);color:var(--txt);font:500 14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,'Helvetica Neue','Noto Sans',Arial}
+.header{
+  position:sticky;
+  top:0;
+  z-index:5;
+  background:#12121aee;
+  backdrop-filter:blur(6px);
+  border-bottom:1px solid #26263a;
+  height:80px;         /* fixa a altura do header para não crescer */
+  overflow:visible;    /* permite que a logo "ultrapasse" sem alterar o fluxo */
+}
+.wrap{max-width:1200px;margin:0 auto;padding:18px}
+.header-row{
+  position:relative;   /* necessário para posicionar a logo absoluta */
+  display:flex;
+  align-items:center;
+  gap:12px;
+  height:80px;
+  padding-left:140px;  /* espaço reservado para a logo; ajuste conforme o tamanho desejado */
+}
+
+/* logo aumentada sem bloquear cliques */
+.logo {
+  position:absolute;
+  left:18px;           /* alinha dentro do .wrap (tem padding 18px) */
+  top:50%;
+  transform:translateY(-50%);
+  height:auto;         /* permita manter proporção */
+  max-height:700px;     /* manter menor que a altura do header (80px) */
+  width:auto;
+  max-width:360px;
+  object-fit:contain;
+  display:block;
+  flex-shrink:0;
+  margin-right:0;      /* removido porque é absoluta */
+  z-index:0;           /* fica atrás dos controles */
+  pointer-events:none; /* permite clicar nos elementos sobrepostos */
+}
+
+/* garante que os botões fiquem acima da logo */
+.right{position:relative; z-index:2}
+h1{margin:0;font-size:20px;letter-spacing:.5px}
+.grid{display:grid;gap:14px}
+.grid.cols-3{grid-template-columns:repeat(3,1fr)}
+.grid.cols-2{grid-template-columns:repeat(2,1fr)}
+.card{background:var(--card);border:1px solid #26263a;border-radius:16px;padding:14px;box-shadow:0 8px 30px #00000040}
+.card-title{margin:0 0 8px 0;font-size:16px}
+label{display:block;margin:6px 0 4px;color:#cfc8ff;font-size:12px}
+input,select,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #2b2b3f;background:#12121a;color:var(--txt);outline:none}
+textarea{min-height:70px;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--ac)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{appearance:none;border:none;border-radius:10px;padding:10px 12px;background:var(--ac);color:#fff;font-weight:700;cursor:pointer}
+.btn:hover{background:var(--ac-2)}
+.btn.ghost{background:transparent;border:1px solid #2b2b3f}
+.btn.bad{background:var(--bad)}
+.btn.ok{background:var(--ok)}
+.btn.warn{background:var(--warn);color:#242424}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px 8px;border-bottom:1px solid #2b2b3f;vertical-align:top}
+th{position:sticky;top:0;background:#161625;z-index:2}
+tbody tr:hover{background:#1a1a29}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;border:1px solid #2b2b3f}
+.pill.ok{background:#1f3a2b;color:#b8ffc9;border-color:#2a5d40}
+.pill.warn{background:#3a331f;color:#ffe9a4;border-color:#5d4f2a}
+.pill.bad{background:#3a1f1f;color:#ffb8b8;border-color:#5d2a2a}
+.muted{color:#b7b4d6}
+.right{margin-left:auto}
+.hide{display:none}
+.sticky-actions{position:sticky;bottom:0;background:#12121acc;border-top:1px solid #2b2b3f;padding:10px;margin:0 -14px -14px -14px;border-radius:0 0 16px 16px;display:flex;gap:8px}
+.table-wrap{max-height:50vh;overflow:auto}
+
+/* Impressão */
+@media print{ /* TIP: desative cabeçalho/rodapé no diálogo de impressão */
+  header, .sticky-actions, #btnNew, #btnExport, label[for="importCsv"], section.card:has(#table), section.card:has(#filterStart), .wrap > :not(#printArea){ display:none !important }
+  body{ background:#fff; color:#000 }
+  #printArea{ display:block !important; }
+}
+@page{ size:A4; margin:14mm }
+
+.print-card{ background:#fff; color:#111; border-color:#ddd }
+/* nova versão: logo em coluna fixa, conteúdo ao lado sem usar padding-left/absolute */
+.print-head{
+  display:grid !important;
+  grid-template-columns: 260px 1fr !important; /* ajuste a largura da coluna da logo */
+  align-items:center !important;
+  gap:12px !important;
+  margin-bottom:12px !important;
+  position:static !important;
+  padding-left:0 !important;
+  min-height:unset !important;
+}
+
+/* Força logo no fluxo da grid (não absoluta) e centraliza na coluna */
+.print-logo {
+  position:static !important;
+  width:260px !important;    /* ajuste o tamanho visual desejado */
+  height:auto !important;
+  max-width:none !important;
+  max-height:none !important;
+  object-fit:contain !important;
+  display:block !important;
+  justify-self:center !important;
+  align-self:center !important;
+  margin:0 !important;
+}
+.print-title{ margin:0; color:#111 }
+.print-sub{ color:#444; font-size:13px }
+.print-head{ display:flex; align-items:center; gap:12px; margin-bottom:12px;
+
+/* nova regra: reserve espaço para a logo sem aumentar a altura do documento */
+position:relative;
+min-height:80px;     /* altura fixa da área de cabeçalho de impressão */
+padding-left:300px;  /* espaço reservado para a logo (ajuste conforme largura da logo) */
+}
+.print-divider{ margin:18px 0 }
+.print-signs{ display:flex; gap:24px }
+.print-sign{ flex:1 }
+.print-sign .line{ height:60px; border-bottom:1px solid #000 }
+.print-note{ margin-top:12px; color:#555; font-size:12px }
+
+.hide-print-area{display:none}

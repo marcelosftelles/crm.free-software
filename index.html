@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gestão de OS — Telles</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="wrap header-row">
+      <img src="assets/logo.png" alt="Logo Telles" class="logo"/>
+      <h1></h1>
+      <div class="right row">
+        <label class="btn ghost" for="logoFile" style="cursor:pointer">Logo<input id="logoFile" type="file" accept="image/*" class="hide"></label>
+        <button class="btn ghost" id="btnExport">Exportar CSV</button>
+        <label class="btn ghost" for="importCsv" style="cursor:pointer">
+          Importar CSV
+          <input id="importCsv" type="file" accept=".csv" class="hide">
+        </label>
+        <button class="btn ok" id="btnNew">Nova OS</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap grid" style="gap:16px">
+
+    <!-- ÁREA DE IMPRESSÃO (oculta até imprimir) -->
+    <section id="printArea" class="card print-card hide-print-area">
+      <div class="print-head">
+        <img src="assets/logo2.png" alt="" class="print-logo">
+        <div>
+          <h2 class="print-title">Ordem de Serviço</h2>
+          <div id="print-os-id" class="print-sub"></div>
+        </div>
+      </div>
+      <div id="printContent" class="print-content"></div>
+      <hr class="print-divider"/>
+      <div class="print-signs">
+        <div class="print-sign"><strong>Assinatura do Responsável</strong><div class="line"></div></div>
+        <div class="print-sign"><strong>Assinatura do Cliente</strong><div class="line"></div></div>
+      </div>
+      
+    </section>
+
+    <section class="card">
+      <h2 class="card-title">Cadastro / Edição</h2>
+      <div class="grid cols-3">
+        <div>
+          <label>Nº OS</label>
+          <div class="row">
+            <input id="osNumber" placeholder="ex.: OS2101" />
+            <button class="btn" id="btnGenOS" title="Gerar OS randômica">Gerar</button>
+          </div>
+        </div>
+        <div>
+          <label>Data de Entrada</label>
+          <input id="entryDate" type="date" />
+        </div>
+        <div>
+          <label>Data de Saída</label>
+          <input id="exitDate" type="date" />
+        </div>
+        <div>
+          <label>Cliente</label>
+          <input id="customer" placeholder="Nome do cliente" />
+        </div>
+        <div>
+          <label>Contato</label>
+          <input id="contact" placeholder="(xx) x xxxx-xxxx" />
+        </div>
+        <div>
+          <label>Produto / Máquina</label>
+          <input id="product" placeholder="Notebook Lenovo, Teclado, etc." />
+        </div>
+        <div>
+          <label>Defeito Relatado</label>
+          <textarea id="defect" placeholder="Descrição do problema"></textarea>
+        </div>
+        <div>
+          <label>Serviço Realizado</label>
+          <textarea id="service" placeholder="O que foi feito"></textarea>
+        </div>
+        <div>
+          <label>Valor do Reparo (R$)</label>
+          <input id="value" type="text" inputmode="decimal" placeholder="235,00" />
+        </div>
+        <div>
+          <label>Status</label>
+          <select id="status">
+            <option>Em análise</option>
+            <option>Concluído</option>
+            <option>Em andamento</option>
+            <option>Aguardando peças</option>
+            <option>Cancelado</option>
+          </select>
+        </div>
+        <div>
+          <label>Dias em Serviço</label>
+          <input id="days" disabled />
+        </div>
+      </div>
+      <div class="sticky-actions">
+        <button class="btn ok" id="btnSave">Salvar</button>
+        <button class="btn warn" id="btnClear">Limpar</button>
+        <button class="btn" id="btnPrint">Imprimir OS (PDF)</button>
+        <button class="btn bad right" id="btnDelete">Excluir</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="card-title">Filtro e Busca</h2>
+      <div class="grid cols-3">
+        <div>
+          <label>Filtrar por Data de Entrada (início)</label>
+          <input id="filterStart" type="date" />
+        </div>
+        <div>
+          <label>Filtrar por Data de Entrada (fim)</label>
+          <input id="filterEnd" type="date" />
+        </div>
+        <div>
+          <label>Status</label>
+          <select id="filterStatus">
+            <option value="">Todos</option>
+            <option>Em análise</option>
+            <option>Concluído</option>
+            <option>Em andamento</option>
+            <option>Aguardando peças</option>
+            <option>Cancelado</option>
+          </select>
+        </div>
+        <div class="grid cols-2" style="grid-column:1/-1">
+          <div>
+            <label>Busca (cliente, produto, defeito, serviço)</label>
+            <input id="search" placeholder="Digite para filtrar..." />
+          </div>
+          <div class="row" style="align-items:flex-end;gap:8px">
+            <button class="btn ghost" id="btnResetFilters">Limpar filtros</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="row" style="justify-content:space-between;align-items:center">
+        <h2 class="card-title">Ordens de Serviço</h2>
+        <div class="muted" id="count"></div>
+      </div>
+      <div class="table-wrap">
+        <table id="table">
+          <thead>
+            <tr>
+              <th style="min-width:92px">Nº OS</th>
+              <th>Entrada</th>
+              <th>Saída</th>
+              <th>Cliente</th>
+              <th>Contato</th>
+              <th>Produto</th>
+              <th>Defeito Relatado</th>
+              <th>Serviço Realizado</th>
+              <th>Valor</th>
+              <th>Status</th>
+              <th>Dias</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="muted" style="margin-top:8px">Clique em uma linha para editar.</p>
+    </section>
+
+  </main>
+
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/print.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+{
+  "name": "telles-tecos",
+  "version": "1.0.0",
+  "description": "1. Extraia o zip em uma pasta local. 2. Coloque sua imagem de logo em `assets/logo.png` (já copiei a sua se estava disponível). 3. Abra `index.html` no navegador (duplo clique). 4. Cadastre/edite OS, filtre, exporte/import CSV e **Imprimir OS (PDF)**.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win --x64"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^37.4.0",
+    "electron-builder": "latest"
+  },
+  "build": {
+    "appId": "com.telles.os",
+    "productName": "Telles OS",
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}
