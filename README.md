@@ -1,29 +1,40 @@
-ï»¿# Telles OS â€“ GestÃ£o de Ordens de ServiÃ§o
+# CRM free OS — Gestão de Ordens de Serviço
 
-Web app offline feito para pequenas assistÃªncias tÃ©cnicas registrarem, organizarem e armazenarem suas OS sem depender de servidor.
+Ferramenta gratuita e totalmente open source para assistências técnicas iniciantes gerarem, organizarem e armazenarem OS sem depender de servidor.
 
-## Para quem Ã©
-- AssistÃªncias tÃ©cnicas e tÃ©cnicos autÃ´nomos que precisam de um controle simples de OS e histÃ³rico.
+## Para quem é
+- Assistências técnicas e técnicos autônomos que precisam de um controle simples de OS, histórico e geração de PDF/CSV.
 
-## Recursos
-- Cadastro e ediÃ§Ã£o de OS com logo personalizada.
-- Filtro e busca rÃ¡pidos.
-- ImpressÃ£o da OS em PDF.
-- ExportaÃ§Ã£o/importaÃ§Ã£o em CSV.
+## Funcionalidades
+- Cadastro e edição de OS com logo personalizada.
+- Filtro, busca e ordenação (mais recentes/mais antigos).
+- Impressão da OS em PDF com logo destacada.
+- Exportação/importação em CSV.
 - Armazenamento local em localStorage (funciona offline).
 
-## Como usar
-1) Extraia o projeto em uma pasta local.
-2) Substitua assets/logo.png pela sua logo.
-3) Abra index.html no navegador.
-4) Cadastre/edite OS, filtre, exporte/import CSV e imprima.
+## Como usar (modo web/offline)
+1. Extraia o projeto em uma pasta local.
+2. (Opcional) Substitua `assets/print-logo.png` ou carregue sua logo pelo botão “Logo”.
+3. Abra `index.html` no navegador.
+4. Cadastre/edite OS, filtre, exporte/import CSV e imprima/salve o PDF.
+
+## Como gerar o instalador (.exe)
+Pré-requisitos:
+- Node.js v18+ e npm.
+- Bibliotecas já declaradas: `electron`, `electron-builder` (instaladas via `npm install`).
+
+Passo a passo:
+1. Instale dependências: `npm install`.
+2. Rodar modo dev (opcional): `npm start`.
+3. Gerar o instalador Windows: `npm run dist` (saída em `dist/`).
 
 ## Estrutura
-- index.html â€“ pÃ¡gina principal
-- css/styles.css â€“ estilos e regras de impressÃ£o
-- js/utils.js â€“ utilitÃ¡rios (formataÃ§Ã£o BRL, datas, ID aleatÃ³rio)
-- js/storage.js â€“ persistÃªncia local + export/import CSV + dados de exemplo
-- js/print.js â€“ montagem e impressÃ£o da OS com logo
-- js/app.js â€“ lÃ³gica de interface e eventos
+- `index.html` — página principal.
+- `css/styles.css` — estilos e regras de impressão.
+- `js/utils.js` — utilitários (formatação BRL, datas, ID aleatório).
+- `js/storage.js` — persistência local + export/import CSV + seed de exemplo.
+- `js/print.js` — montagem e impressão/geração de PDF.
+- `js/app.js` — lógica de interface e eventos.
+- `main.js` / `preload.js` — bootstrap do app Electron.
 
-Tudo funciona offline e sem servidor.
+Tudo funciona offline e sem servidor. Pull requests são bem-vindos.

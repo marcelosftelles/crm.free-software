@@ -1,9 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Gestão de OS — Telles</title>
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="apple-touch-icon" href="assets/app-icon-512.png" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
@@ -28,18 +30,13 @@
     <!-- ÁREA DE IMPRESSÃO (oculta até imprimir) -->
     <section id="printArea" class="card print-card hide-print-area">
       <div class="print-head">
-        <img src="assets/logo2.png" alt="" class="print-logo">
+        <img src="assets/print-logo.png" alt="" class="print-logo">
         <div>
           <h2 class="print-title">Ordem de Serviço</h2>
           <div id="print-os-id" class="print-sub"></div>
         </div>
       </div>
       <div id="printContent" class="print-content"></div>
-      <hr class="print-divider"/>
-      <div class="print-signs">
-        <div class="print-sign"><strong>Assinatura do Responsável</strong><div class="line"></div></div>
-        <div class="print-sign"><strong>Assinatura do Cliente</strong><div class="line"></div></div>
-      </div>
       
     </section>
 
@@ -47,7 +44,7 @@
       <h2 class="card-title">Cadastro / Edição</h2>
       <div class="grid cols-3">
         <div>
-          <label>Nº OS</label>
+          <label>N° OS</label>
           <div class="row">
             <input id="osNumber" placeholder="ex.: OS2101" />
             <button class="btn" id="btnGenOS" title="Gerar OS randômica">Gerar</button>
@@ -130,6 +127,13 @@
             <option>Cancelado</option>
           </select>
         </div>
+        <div>
+          <label>Ordenar</label>
+          <select id="sortOrder">
+            <option value="recent">Mais recentes</option>
+            <option value="old">Mais antigos</option>
+          </select>
+        </div>
         <div class="grid cols-2" style="grid-column:1/-1">
           <div>
             <label>Busca (cliente, produto, defeito, serviço)</label>
@@ -151,7 +155,7 @@
         <table id="table">
           <thead>
             <tr>
-              <th style="min-width:92px">Nº OS</th>
+              <th style="min-width:92px">N° OS</th>
               <th>Entrada</th>
               <th>Saída</th>
               <th>Cliente</th>

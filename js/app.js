@@ -1,9 +1,9 @@
-
+﻿
 // App principal - exposto em window.App
 (function(){
   const { $, $$, brl, parseBRL, diffDays, uid, renderStatus } = window.Utils;
   const { load, saveAll, exportCSV, importCSV, seedOnce } = window.StorageAPI;
-  const { printOS } = window.PrintAPI;
+  const { choosePrintFlow } = window.PrintAPI;
 
   let currentId = null;
   function applyLogo(src){
@@ -67,6 +67,7 @@
     const fs = $('#filterStart').value;
     const fe = $('#filterEnd').value;
     const st = $('#filterStatus').value;
+    const sortOrder = $('#sortOrder') ? $('#sortOrder').value : 'recent';
 
     const filtered = list.filter(x=>{
       if(st && x.status !== st) return false;
@@ -81,7 +82,19 @@
 
     $('#count').textContent = filtered.length + ' registro(s)';
 
-    for(const item of filtered){
+    const sorted = [...filtered].sort((a,b)=>{
+      const score = (it)=>{
+        const entry = it.entryDate ? Date.parse(it.entryDate) : NaN;
+        if(!Number.isNaN(entry)) return entry;
+        if(it.updatedAt) return it.updatedAt;
+        if(it.createdAt) return it.createdAt;
+        return 0;
+      };
+      const diff = score(b) - score(a);
+      return sortOrder === 'old' ? -diff : diff;
+    });
+
+    for(const item of sorted){
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td class="muted">${item.id||''}</td>
@@ -149,14 +162,17 @@
     $('#btnSave').addEventListener('click', upsert);
     $('#btnClear').addEventListener('click', clearForm);
     $('#btnDelete').addEventListener('click', removeItem);
-    $('#btnPrint').addEventListener('click', printOS);
+    $('#btnPrint').addEventListener('click', choosePrintFlow);
 
     $('#search').addEventListener('input', render);
     $('#filterStart').addEventListener('change', render);
     $('#filterEnd').addEventListener('change', render);
     $('#filterStatus').addEventListener('change', render);
+    const sortSelect = $('#sortOrder');
+    if(sortSelect) sortSelect.addEventListener('change', render);
     $('#btnResetFilters').addEventListener('click', ()=>{
       ['filterStart','filterEnd','filterStatus','search'].forEach(id=>$('#'+id).value='');
+      if(sortSelect) sortSelect.value = 'recent';
       render();
     });
 

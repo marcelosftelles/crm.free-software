@@ -1,4 +1,4 @@
-:root{
+﻿:root{
   --bg:#0f0f14; --card:#181823; --muted:#aa9bd8; --ac:#6d5bd0; --ac-2:#8b7cf1; --txt:#e9e8ff; --ok:#2ecc71; --warn:#f1c40f; --bad:#e74c3c;
 }
 *{box-sizing:border-box}
@@ -10,8 +10,8 @@ body{margin:0;background:linear-gradient(120deg,#0e0e13,#12121a 60%,#0f0f14);col
   background:#12121aee;
   backdrop-filter:blur(6px);
   border-bottom:1px solid #26263a;
-  height:80px;         /* fixa a altura do header para não crescer */
-  overflow:visible;    /* permite que a logo "ultrapasse" sem alterar o fluxo */
+  height:80px;         /* fixa a altura do header para nao crescer */
+  overflow:visible;    /* permite que a logo ultrapasse sem alterar o fluxo */
 }
 .wrap{max-width:1200px;margin:0 auto;padding:18px}
 .header-row{
@@ -29,7 +29,7 @@ body{margin:0;background:linear-gradient(120deg,#0e0e13,#12121a 60%,#0f0f14);col
   left:18px;           /* alinha dentro do .wrap (tem padding 18px) */
   top:50%;
   transform:translateY(-50%);
-  height:auto;         /* permita manter proporção */
+  height:auto;         /* permite manter proporção */
   max-height:700px;     /* manter menor que a altura do header (80px) */
   width:auto;
   max-width:360px;
@@ -74,8 +74,8 @@ tbody tr:hover{background:#1a1a29}
 .sticky-actions{position:sticky;bottom:0;background:#12121acc;border-top:1px solid #2b2b3f;padding:10px;margin:0 -14px -14px -14px;border-radius:0 0 16px 16px;display:flex;gap:8px}
 .table-wrap{max-height:50vh;overflow:auto}
 
-/* Impressão */
-@media print{ /* TIP: desative cabeçalho/rodapé no diálogo de impressão */
+/* Impressao */
+@media print{ /* TIP: desative cabecalho/rodape no dialogo de impressao */
   header, .sticky-actions, #btnNew, #btnExport, label[for="importCsv"], section.card:has(#table), section.card:has(#filterStart), .wrap > :not(#printArea){ display:none !important }
   body{ background:#fff; color:#000 }
   #printArea{ display:block !important; }
@@ -83,40 +83,28 @@ tbody tr:hover{background:#1a1a29}
 @page{ size:A4; margin:14mm }
 
 .print-card{ background:#fff; color:#111; border-color:#ddd }
-/* nova versão: logo em coluna fixa, conteúdo ao lado sem usar padding-left/absolute */
+.print-card table, .print-card th, .print-card td{ background:#fff !important; color:#111 !important; border-color:#ccc }
+.print-card tbody tr:hover{ background:#fff !important; }
+.print-card th{ position:static; }
 .print-head{
-  display:grid !important;
-  grid-template-columns: 260px 1fr !important; /* ajuste a largura da coluna da logo */
-  align-items:center !important;
-  gap:12px !important;
-  margin-bottom:12px !important;
-  position:static !important;
-  padding-left:0 !important;
-  min-height:unset !important;
+  display:grid;
+  grid-template-columns: 1fr 2fr;
+  align-items:center;
+  gap:12px;
+  margin-bottom:12px;
 }
-
-/* Força logo no fluxo da grid (não absoluta) e centraliza na coluna */
 .print-logo {
-  position:static !important;
-  width:260px !important;    /* ajuste o tamanho visual desejado */
-  height:auto !important;
-  max-width:none !important;
-  max-height:none !important;
-  object-fit:contain !important;
-  display:block !important;
-  justify-self:center !important;
-  align-self:center !important;
-  margin:0 !important;
+  width:380px;
+  max-width:380px;
+  height:auto;
+  object-fit:contain;
+  display:block;
+  justify-self:center;
+  align-self:center;
+  margin:0;
 }
 .print-title{ margin:0; color:#111 }
 .print-sub{ color:#444; font-size:13px }
-.print-head{ display:flex; align-items:center; gap:12px; margin-bottom:12px;
-
-/* nova regra: reserve espaço para a logo sem aumentar a altura do documento */
-position:relative;
-min-height:80px;     /* altura fixa da área de cabeçalho de impressão */
-padding-left:300px;  /* espaço reservado para a logo (ajuste conforme largura da logo) */
-}
 .print-divider{ margin:18px 0 }
 .print-signs{ display:flex; gap:24px }
 .print-sign{ flex:1 }

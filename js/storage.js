@@ -1,4 +1,4 @@
-
+﻿
 // Persistência e CSV - expostos em window.StorageAPI
 (function(){
   const key = 'telles_os_v1';
@@ -84,7 +84,6 @@
     ];
     for(const s of samples){ s.days = window.Utils.diffDays(s.entryDate,s.exitDate); s.createdAt = Date.now(); s.updatedAt = Date.now(); }
     saveAll(samples);
-    localStorage.setItem(seedFlagKey,'1');
   }
 
   window.StorageAPI = { load, saveAll, exportCSV, importCSV, seedOnce };
