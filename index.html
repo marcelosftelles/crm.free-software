@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="js/chart.js"></script>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 
@@ -23,11 +24,14 @@
         </div>
       </div>
       <nav class="nav-menu">
-        <button class="nav-item active" data-view="form">
+        <button class="nav-item" data-view="form">
           <span class="icon">📝</span> Nova OS
         </button>
         <button class="nav-item" data-view="list">
           <span class="icon">📋</span> Ordens de Serviço
+        </button>
+        <button class="nav-item active" data-view="dashboard">
+          <span class="icon">📊</span> Dashboard
         </button>
       </nav>
       <div class="sidebar-footer">
@@ -42,7 +46,7 @@
 
       <!-- Header Mobile / Actions -->
       <header class="top-header">
-        <h2 id="pageTitle">Nova Ordem de Serviço</h2>
+        <h2 id="pageTitle">Dashboard</h2>
         <div class="header-actions">
           <label class="btn ghost small" for="logoFile">Importar Logo<input id="logoFile" type="file" accept="image/*"
               class="hide"></label>
@@ -52,8 +56,72 @@
         </div>
       </header>
 
+      <!-- View: Dashboard -->
+      <div id="view-dashboard" class="view active">
+        <div class="dashboard-filters">
+          <label>Período:</label>
+          <input type="date" id="dashStart" title="Data Inicial">
+          <span style="color:var(--text-muted)">até</span>
+          <input type="date" id="dashEnd" title="Data Final">
+          <button class="btn ghost small" id="btnDashFilterClear">Limpar</button>
+        </div>
+
+        <div class="dashboard-grid">
+          <!-- Summary Cards -->
+          <div class="stat-card total-earnings">
+            <div class="stat-icon">💰</div>
+            <div class="stat-info">
+              <h3>Rendimentos</h3>
+              <p id="dashTotalEarnings">R$ 0,00</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📋</div>
+            <div class="stat-info">
+              <h3>Total de OS</h3>
+              <p id="dashTotalOS">0</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-info">
+              <h3>Em Aberto</h3>
+              <p id="dashOpenOS">0</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-info">
+              <h3>Concluídas</h3>
+              <p id="dashCompletedOS">0</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-charts">
+          <div class="card chart-card">
+            <h3>Status das Ordens</h3>
+            <div class="chart-container">
+              <canvas id="chartStatus"></canvas>
+            </div>
+          </div>
+          <div class="card chart-card">
+            <h3>Rendimentos Mensais</h3>
+            <div class="chart-container">
+              <canvas id="chartEarnings"></canvas>
+            </div>
+          </div>
+          <div class="card chart-card">
+            <h3>Últimas Movimentações</h3>
+            <div id="dashRecentList" class="recent-list">
+              <!-- Injected via JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- View: Form (Nova OS / Edição) -->
-      <div id="view-form" class="view active">
+      <div id="view-form" class="view">
         <section class="card form-card">
           <div class="grid cols-3">
             <div>

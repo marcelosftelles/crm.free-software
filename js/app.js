@@ -4,8 +4,10 @@
   const { load, saveAll, exportCSV, importCSV, seedOnce } = window.StorageAPI;
 
   // State
-  let currentView = 'form'; // 'form' | 'list'
+  let currentView = 'dashboard'; // 'dashboard' | 'form' | 'list'
   let editingId = null;
+  let chartStatus = null;
+  let chartEarnings = null;
 
   // --- Initialization ---
   function init() {
@@ -17,6 +19,7 @@
     seedOnce();
 
     // Initial Render
+    renderDashboard();
     renderList();
     updateCounts();
 
@@ -78,6 +81,8 @@
     let title = '';
     if (viewName === 'form') {
       title = editingId ? '✏️ Editar Ordem de Serviço' : 'Nova Ordem de Serviço';
+    } else if (viewName === 'dashboard') {
+      title = 'Dashboard';
     } else {
       title = 'Histórico de Ordens';
     }
@@ -85,6 +90,167 @@
 
     if (viewName === 'list') {
       renderList();
+    } else if (viewName === 'dashboard') {
+      renderDashboard();
+    }
+  }
+
+  // --- Dashboard Logic ---
+  function renderDashboard() {
+    const list = load();
+
+    // Filter by Date Range
+    const start = $('#dashStart').value;
+    const end = $('#dashEnd').value;
+
+    const filtered = list.filter(item => {
+      if (!item.entryDate) return false;
+      if (start && item.entryDate < start) return false;
+      if (end && item.entryDate > end) return false;
+      return true;
+    });
+
+    // 1. Calculate Stats
+    const totalOS = filtered.length;
+    const openOS = filtered.filter(x => x.status !== 'Concluído' && x.status !== 'Cancelado').length;
+    const completedOS = filtered.filter(x => x.status === 'Concluído').length;
+
+    // Calculate Earnings (Sum of value for ALL OS or just Completed? Usually Completed makes more sense for "Earnings", but let's sum all for now or maybe just completed. Let's do Completed for "Rendimentos" to be accurate)
+    // User asked for "meus rendimentos". Usually implies money earned.
+    // Calculate Earnings
+    const earnings = filtered
+      .filter(x => x.status === 'Concluído')
+      .reduce((acc, item) => acc + (item.value || 0), 0);
+
+    // 2. Update DOM
+    $('#dashTotalEarnings').textContent = brl(earnings);
+    $('#dashTotalOS').textContent = totalOS;
+    $('#dashOpenOS').textContent = openOS;
+    $('#dashCompletedOS').textContent = completedOS;
+
+    // 3. Charts
+    updateCharts(filtered);
+
+    // 4. Recent Activity (Last 5)
+    const recent = [...filtered].sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0)).slice(0, 5);
+    const recentContainer = $('#dashRecentList');
+    recentContainer.innerHTML = '';
+
+    if (recent.length === 0) {
+      recentContainer.innerHTML = '<div class="muted" style="padding:12px">Nenhuma atividade recente.</div>';
+    } else {
+      recent.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'recent-item';
+        el.innerHTML = `
+          <div class="recent-info">
+            <span class="recent-id">${item.id}</span>
+            <span class="recent-customer">${item.customer}</span>
+          </div>
+          <div class="recent-value">${brl(item.value)}</div>
+        `;
+        recentContainer.appendChild(el);
+      });
+    }
+  }
+
+  function updateCharts(list) {
+    // --- Status Chart ---
+    const statusCounts = {};
+    list.forEach(x => {
+      statusCounts[x.status] = (statusCounts[x.status] || 0) + 1;
+    });
+
+    const statusLabels = Object.keys(statusCounts);
+    const statusData = Object.values(statusCounts);
+    const statusColors = statusLabels.map(s => {
+      if (s === 'Concluído') return '#10b981';
+      if (s === 'Em andamento') return '#3b82f6';
+      if (s === 'Aguardando peças') return '#f59e0b';
+      if (s === 'Cancelado') return '#ef4444';
+      return '#6366f1'; // Default/Em análise
+    });
+
+    if (chartStatus) {
+      chartStatus.data.labels = statusLabels;
+      chartStatus.data.datasets[0].data = statusData;
+      chartStatus.data.datasets[0].backgroundColor = statusColors;
+      chartStatus.update();
+    } else {
+      const ctx = document.getElementById('chartStatus').getContext('2d');
+      chartStatus = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: statusLabels,
+          datasets: [{
+            data: statusData,
+            backgroundColor: statusColors,
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'right', labels: { color: '#94a3b8' } }
+          }
+        }
+      });
+    }
+
+    // --- Earnings Chart (Monthly) ---
+    // Group by Month (YYYY-MM)
+    const earningsByMonth = {};
+    list.forEach(x => {
+      if (x.status === 'Concluído' && x.entryDate) {
+        const month = x.entryDate.substring(0, 7); // YYYY-MM
+        earningsByMonth[month] = (earningsByMonth[month] || 0) + (x.value || 0);
+      }
+    });
+
+    const sortedMonths = Object.keys(earningsByMonth).sort();
+    const earningsData = sortedMonths.map(m => earningsByMonth[m]);
+    const earningsLabels = sortedMonths.map(m => {
+      const [y, mo] = m.split('-');
+      return `${mo}/${y}`;
+    });
+
+    if (chartEarnings) {
+      chartEarnings.data.labels = earningsLabels;
+      chartEarnings.data.datasets[0].data = earningsData;
+      chartEarnings.update();
+    } else {
+      const ctx2 = document.getElementById('chartEarnings').getContext('2d');
+      chartEarnings = new Chart(ctx2, {
+        type: 'bar',
+        data: {
+          labels: earningsLabels,
+          datasets: [{
+            label: 'Rendimentos (R$)',
+            data: earningsData,
+            backgroundColor: '#6366f1',
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: '#2d2f45' },
+              ticks: { color: '#94a3b8' }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { color: '#94a3b8' }
+            }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
     }
   }
 
@@ -424,10 +590,20 @@
 
     // Logo
     wireLogoUpload();
+
+    // Dashboard Filters
+    ['dashStart', 'dashEnd'].forEach(id => {
+      $('#' + id).addEventListener('input', renderDashboard);
+    });
+    $('#btnDashFilterClear').addEventListener('click', () => {
+      $('#dashStart').value = '';
+      $('#dashEnd').value = '';
+      renderDashboard();
+    });
   }
 
   // Expose
-  window.App = { init, render: renderList };
+  window.App = { init, render: () => { renderList(); renderDashboard(); } };
 
   // Start
   window.addEventListener('DOMContentLoaded', init);
